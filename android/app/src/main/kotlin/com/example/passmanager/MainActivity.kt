@@ -1,4 +1,4 @@
-package com.example.passmanager
+package com.slimeyslime.passmanager
 
 import io.flutter.embedding.android.FlutterActivity
 

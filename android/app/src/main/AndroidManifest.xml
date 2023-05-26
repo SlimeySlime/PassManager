@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.passmanager">
+    package="com.slimeyslime.passmanager">
    <application
-        android:label="passmanager"
+        android:label="PassManager"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

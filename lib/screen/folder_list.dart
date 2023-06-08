@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:passmanager/animation/folderscreen_navigate.dart';
 // import 'package:passmanager/domain/passfolder.dart';
 // import 'package:passmanager/domain/passfolder_repository.dart';
 import 'package:passmanager/domain/folder_repository.dart';
 import 'package:passmanager/domain/passfolder.dart';
 import 'package:passmanager/screen/listview/folder_item.dart';
+import 'package:passmanager/screen/pass_screen.dart';
 import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
@@ -11,6 +13,8 @@ import 'package:provider/provider.dart';
 // import 'package:sqflite/sqflite.dart';
 
 class FolderList extends StatefulWidget {
+  static const String routeName = '/folder_list';
+
   FolderList({super.key});
 
   @override
@@ -24,13 +28,10 @@ class _FolderListState extends State<FolderList> {
   var searchKeyword = '';
 
   late List<Map> folders = [];
-  late var foldersFuture;
 
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
-    // folders = await folderRepo.getAllPassFolder();
-    foldersFuture = folderRepo.getAllPassFolder();
     _folderUpdate();
   }
 
@@ -84,29 +85,40 @@ class _FolderListState extends State<FolderList> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextField(
-            onChanged: (value) {
-              setState(() {
-                searchKeyword = value;
-              });
-            },
-            controller: searchController,
-            decoration: const InputDecoration(
-              labelText: 'Search',
-            ),
+          padding: const EdgeInsets.all(4.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Padding(
+                padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
+                child: Icon(Icons.search),
+              ),
+              Flexible(
+                child: TextField(
+                  onChanged: (value) {
+                    setState(() {
+                      searchKeyword = value;
+                    });
+                  },
+                  controller: searchController,
+                  decoration: const InputDecoration(
+                    labelText: 'Search',
+                  ),
+                ),
+              ),
+            ],
           ),
-        ),
-        const Row(
-          children: [
-            Icon(Icons.search),
-            Flexible(child: TextField()),
-            Text('testing22'),
-          ],
         ),
         TextButton(
             onPressed: () => db_test_insert(),
             child: Text('db testing button ' + searchKeyword)),
+        TextButton(
+            onPressed: () {
+              // Navigator.of(context).pushNamed(PassScreen.routeName);
+              Navigator.of(context).push(folderScreen_animation());
+            },
+            child: Text('to PassScreen')),
         folders.length > 1
             ? Expanded(
                 child: ListView.builder(
@@ -134,4 +146,23 @@ class _FolderListState extends State<FolderList> {
       ],
     );
   }
+}
+
+Route _createRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) {
+      return PassScreen();
+    },
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(0.0, 1.0);
+      const end = Offset.zero; // (0.0, 0.0)
+      final tween = Tween(begin: begin, end: end);
+      final offsetAnimation = animation.drive(tween);
+      // return child;
+      return SlideTransition(
+        position: offsetAnimation,
+        child: child,
+      );
+    },
+  );
 }

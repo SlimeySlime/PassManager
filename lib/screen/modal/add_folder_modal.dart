@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:passmanager/screen/pass_screen.dart';
 
 class AddFolderModal extends StatefulWidget {
   const AddFolderModal({super.key});
@@ -12,19 +13,15 @@ class _AddFolderModalState extends State<AddFolderModal> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          TextField(
-            controller: _foldernameController,
-            decoration: const InputDecoration(labelText: '항목 이름'),
-          ),
-          // TextField(
-          //   controller: null,
-          //   decoration: const InputDecoration(labelText: '아이콘 /TODO'),
-          // ),
-        ],
-      ),
+    return Center(
+      child: Column(children: [
+        Text('ok dialog'),
+        IconButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed(PassScreen.routeName);
+            },
+            icon: const Icon(Icons.access_time_filled_rounded))
+      ]),
     );
   }
 }

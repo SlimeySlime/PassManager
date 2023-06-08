@@ -60,7 +60,7 @@ class _MainPageState extends State<MainPage> {
         onPressed: () => showDialog(
           context: context,
           builder: (BuildContext context) => Dialog(
-            child: const AddFolderModal(),
+            child: AddFolderModal(),
           ),
         ),
         tooltip: 'Add Folder',

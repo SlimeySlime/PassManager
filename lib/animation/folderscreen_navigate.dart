@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:passmanager/screen/pass_screen.dart';
 
-Route folderScreen_animation() {
+Route folderScreenAnimation() {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) {
       return PassScreen();

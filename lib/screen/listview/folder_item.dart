@@ -1,26 +1,40 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:passmanager/domain/passfolder.dart';
+import 'package:passmanager/screen/pass_screen.dart';
 
 class FolderItem extends StatelessWidget {
   // const FolderItem({super.key, required this.folder});
 
   // final PassFolder folder;
   const FolderItem(
-      {super.key, required this.folderName, required this.deleting});
+      {super.key,
+      required this.folderName,
+      required this.deleting,
+      required this.iconClick});
   final String folderName;
   final Function deleting;
+  final Function iconClick;
 
   @override
   Widget build(BuildContext context) {
     // Dissmisible
     return Card(
       child: ListTile(
-        leading: const CircleAvatar(
-          child: Padding(
-            padding: EdgeInsets.all(4.0),
-            child: FittedBox(
-              child: Icon(Icons.abc),
+        leading: GestureDetector(
+          onLongPress: () {
+            iconClick();
+          },
+          onTap: () {
+            print('icon open');
+            iconClick();
+          },
+          child: const CircleAvatar(
+            child: Padding(
+              padding: EdgeInsets.all(4.0),
+              child: FittedBox(
+                child: Icon(Icons.abc),
+              ),
             ),
           ),
         ),
@@ -33,6 +47,9 @@ class FolderItem extends StatelessWidget {
               print('ok');
               deleting();
             }),
+        onTap: () {
+          Navigator.of(context).pushNamed(PassScreen.routeName);
+        },
       ),
     );
   }

@@ -85,8 +85,8 @@ class FolderRepository {
     late int folderId;
     await db.transaction((txn) async {
       int id1 = await txn.rawInsert(
-          'INSERT INTO $_tablePassFolder ($_columnFolderName, $_columnFolderValue) VALUES (?, ?)',
-          [folder.foldername, folder.foldervalue]);
+          'INSERT INTO $_tablePassFolder ($_columnFolderName, $_columnFolderValue, ) VALUES (?, ?)',
+          [folder.folderName, folder.folderSubtitle]);
       // return id1;
       folderId = id1;
     });

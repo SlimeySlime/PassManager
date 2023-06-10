@@ -7,10 +7,13 @@ class FolderProvider with ChangeNotifier {
   // static final FolderRepository instance = FolderRepository._instance();
 
   static const String _tablePassFolder = 'PassFolder';
-  static const String _columnId = '_id';
+  static const String _columnId = 'id';
   static const String _columnFolderName = 'folder_name';
   static const String _columnFolderValue = 'folder_value';
-
+  static const String _columnFolderSubtitle = 'folder_subtitle';
+  static const String _columnFolderIconData = 'folder_Icon_data';
+  static const String _columnFolderIconColor = 'folder_Icon_color';
+  static const String _columnFolderColor = 'folder_color';
   static const _dbPathName = 'passfolder.db';
 
   late Database _db;
@@ -59,8 +62,8 @@ class FolderProvider with ChangeNotifier {
     var folderId;
     await _db.transaction((txn) async {
       int id1 = await txn.rawInsert(
-          'INSERT INTO $_tablePassFolder ($_columnFolderName, $_columnFolderValue) VALUES (?, ?)',
-          [folder.foldername, folder.foldervalue]);
+          'INSERT INTO $_tablePassFolder ($_columnFolderName, $_columnFolderSubtitle) VALUES (?, ?)',
+          [folder.folderName, folder.folderSubtitle]);
       folderId = id1;
     });
     return folderId;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:passmanager/animation/folderscreen_navigate.dart';
 import 'package:passmanager/domain/folder_repository.dart';
+import 'package:passmanager/domain/iconList.dart';
 import 'package:passmanager/domain/passfolder.dart';
 import 'package:passmanager/screen/listview/folder_item.dart';
 import 'package:passmanager/screen/modal/folder_icon_modal.dart';
@@ -48,13 +49,26 @@ class _FolderListState extends State<FolderList> {
     });
   }
 
-  void addFolder(String folderName) {
+  void addFolder(String folderName) async {
     print('${searchController.text} should added (text)');
+    var insertedId =
+        await folderRepo.insert(PassFolder(searchKeyword, 'no value'));
+    print('inserted ID : $insertedId');
+
+    var folderList = await folderRepo.getAllPassFolder();
+
+    setState(() {
+      folders = folderList;
+    });
   }
 
   void deleteFolder(int id) async {
     await folderRepo.deleteFolder(id);
     _folderUpdate();
+  }
+
+  void folderIconUpdate(int iconData) {
+    print('this will change iconData to $iconData');
   }
 
   void db_test_insert() async {
@@ -124,8 +138,10 @@ class _FolderListState extends State<FolderList> {
                       iconClick: () {
                         showDialog(
                             context: context,
-                            builder: (BuildContext context) => const Dialog(
-                                  child: FolderIconModal(),
+                            builder: (BuildContext context) => Dialog(
+                                  child: FolderIconModal(
+                                      iconClick: folderIconUpdate,
+                                      iconDatas: FolderIconList),
                                 ));
                       },
                     ),

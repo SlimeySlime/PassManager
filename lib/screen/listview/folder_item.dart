@@ -22,16 +22,12 @@ class FolderItem extends StatelessWidget {
     return Card(
       child: ListTile(
         leading: GestureDetector(
-          onLongPress: () {
-            iconClick();
-          },
           onTap: () {
-            print('icon open');
             iconClick();
           },
           child: const CircleAvatar(
             child: Padding(
-              padding: EdgeInsets.all(4.0),
+              padding: EdgeInsets.all(0.0),
               child: FittedBox(
                 child: Icon(Icons.abc),
               ),

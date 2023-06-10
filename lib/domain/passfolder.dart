@@ -3,25 +3,36 @@ import 'package:path/path.dart';
 import 'dart:async';
 import 'package:sqflite/sqflite.dart';
 
+// static const String _columnId = 'id';
+// static const String _tablePassFolder = 'PassFolder';
+// static const String _columnFolderName = 'folder_name';
+// static const String _columnFolderSubtitle = 'folder_subtitle';
+// static const String _columnFolderIconData = 'folder_Icon_data';
+// static const String _columnFolderIconColor = 'folder_Icon_color';
+// static const String _columnFolderColor = 'folder_color';
+
 const String passTable = 'passfolder';
 const String columnId = '_id';
 const String columnName = 'name';
 
 class PassFolder {
   late int id;
-  final String foldername;
-  final String foldervalue;
+  late String folderName;
+  late String folderSubtitle;
+  late int folderIconData;
+  late String folderIconColor;
+  late String folderColor;
 
-  PassFolder(this.foldername, this.foldervalue);
-
-  // Map<String, dynamic> toMap() {
-  //   return {columnId: id, columnName: foldername};
-  // }
+  PassFolder(this.folderName,
+      [this.folderSubtitle = '',
+      this.folderIconData = -1,
+      this.folderIconColor = '',
+      this.folderColor = '']);
 
   Map<String, Object?> toMap() {
     var map = <String, Object?>{
-      'foldername': foldername,
-      'foldervalue': foldervalue,
+      'folder_name': folderName,
+      'folder_subtitle': folderSubtitle,
     };
     if (id != null) {
       map[columnId] = id;
@@ -29,10 +40,13 @@ class PassFolder {
     return map;
   }
 
-  Map<String, dynamic> toJson() {
-    return {columnId: id, columnName: foldername};
-  }
+  // Map<String, dynamic> toJson() {
+  //   return {columnId: id, columnName: foldername};
+  // }
 
+  factory PassFolder.fromMap() {
+    return PassFolder('folderName');
+  }
   // factory PassFolder.fromJson(Map<String, dynamic> json) {
   //   return PassFolder(
   //     id: json[columnId],
@@ -40,27 +54,3 @@ class PassFolder {
   //   );
   // }
 }
-
-// class PassFolderAlt {
-//   late int id;
-//   final String foldername;
-//   final String foldervalue;
-
-//   PassFolderAlt(this.foldername, this.foldervalue);
-
-//   Map<String, Object?> toMap() {
-//     var map = <String, Object?>{
-//       'foldername': foldername,
-//       'foldervalue': foldervalue,
-//     };
-//     if (id != null) {
-//       map[columnId] = id;
-//     }
-//     return map;
-//   }
-
-//   PassFolder.fromMap(Map<String, Object?> map) {
-//     id = map[columnId];
-//     foldername = map[columnFolderName];
-//   }
-// }

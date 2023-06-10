@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:passmanager/domain/folder_repository.dart';
+import 'package:passmanager/domain/passfolder.dart';
 import 'package:passmanager/screen/pass_screen.dart';
 
 class AddFolderModal extends StatefulWidget {
@@ -15,24 +16,13 @@ class AddFolderModal extends StatefulWidget {
 class _AddFolderModalState extends State<AddFolderModal> {
   final _foldernameController = TextEditingController();
 
-  void _addFolder() {
+  void _addFolder() async {
     final FolderRepository repo = FolderRepository();
+    await repo.insert(PassFolder(_foldernameController.text, ''));
     print(
         'todo - this should add folder ${_foldernameController.text} and pop dialog');
+    // widget.folderAdd(_foldernameController.text);
   }
-
-  final List<Icon> _iconDatas = [
-    Icon(IconData(555, fontFamily: 'MaterialIcons')),
-    Icon(IconData(5256)),
-    Icon(IconData(5457)),
-    Icon(Icons.abc),
-    Icon(Icons.delete),
-    Icon(
-      IconData(984246, fontFamily: 'MaterialIcons'),
-    ),
-  ];
-
-  final Icon ico = Icon(Icons.abc);
 
   @override
   Widget build(BuildContext context) {
@@ -49,25 +39,6 @@ class _AddFolderModalState extends State<AddFolderModal> {
           TextField(
             autofocus: true,
             controller: _foldernameController,
-          ),
-          SizedBox(
-            height: 100,
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 0,
-                  mainAxisSpacing: 0,
-                  childAspectRatio: 2),
-              itemBuilder: (context, index) {
-                return IconButton(
-                    onPressed: () {
-                      final ico = _iconDatas[index].icon.toString();
-                      print(ico);
-                    },
-                    icon: _iconDatas[index]);
-              },
-              itemCount: _iconDatas.length,
-            ),
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(4, 16, 4, 0),
@@ -99,6 +70,7 @@ class _AddFolderModalState extends State<AddFolderModal> {
                             MaterialStateProperty.all<Color>(Colors.blue)),
                     onPressed: () {
                       _addFolder();
+                      // widget.folderAdd(_foldernameController.text);
                       Navigator.of(context).pop();
                     },
                     child: const Text('추가하기',

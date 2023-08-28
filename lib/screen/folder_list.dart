@@ -71,7 +71,7 @@ class _FolderListState extends State<FolderList> {
     print('this will change iconData to $iconData');
   }
 
-  void db_test_insert() async {
+  void dbTestInsert() async {
     var insertedId =
         await folderRepo.insert(PassFolder(searchKeyword, 'no value'));
     print('inserted ID : $insertedId');
@@ -85,71 +85,73 @@ class _FolderListState extends State<FolderList> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 1200,
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
-                  child: Icon(Icons.search),
-                ),
-                Flexible(
-                  child: TextField(
-                    focusNode: _searctTextFocus,
-                    autofocus: false,
-                    onChanged: (value) {
-                      setState(() {
-                        searchKeyword = value;
-                      });
-                    },
-                    controller: searchController,
-                    decoration: const InputDecoration(
-                      labelText: 'Search',
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
+                    child: Icon(Icons.search),
+                  ),
+                  Flexible(
+                    child: TextField(
+                      focusNode: _searctTextFocus,
+                      autofocus: false,
+                      onChanged: (value) {
+                        setState(() {
+                          searchKeyword = value;
+                        });
+                      },
+                      controller: searchController,
+                      decoration: const InputDecoration(
+                        labelText: 'Search',
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          TextButton(
-              onPressed: () => db_test_insert(),
-              child: Text('db testing button ' + searchKeyword)),
-          TextButton(
-              onPressed: () {
-                // Navigator.of(context).pushNamed(PassScreen.routeName);
-                Navigator.of(context).push(folderScreenAnimation());
-              },
-              child: Text('to PassScreen')),
-          folders.length > 1
-              ? SizedBox(
-                  height: 600,
-                  child: ListView.builder(
-                    itemBuilder: (BuildContext ctx, int index) => FolderItem(
-                      folderName: folders[index].values.toList()[1],
-                      deleting: () {
-                        deleteFolder(folders[index].values.toList()[0]);
-                      },
-                      iconClick: () {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) => Dialog(
-                                  child: FolderIconModal(
-                                      iconClick: folderIconUpdate,
-                                      iconDatas: FolderIconList),
-                                ));
-                      },
+            TextButton(
+                onPressed: () => dbTestInsert(),
+                child: Text('db testing insert $searchKeyword')),
+            TextButton(
+                onPressed: () {
+                  // Navigator.of(context).pushNamed(PassScreen.routeName);
+                  Navigator.of(context).push(folderScreenAnimation());
+                },
+                child: const Text('to PassScreen')),
+            folders.isNotEmpty
+                ? SizedBox(
+                    height: 600,
+                    child: ListView.builder(
+                      itemBuilder: (BuildContext ctx, int index) => FolderItem(
+                        folderName: folders[index].values.toList()[1],
+                        deleting: () {
+                          deleteFolder(folders[index].values.toList()[0]);
+                        },
+                        iconClick: () {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) => Dialog(
+                                    child: FolderIconModal(
+                                        iconClick: folderIconUpdate,
+                                        iconDatas: FolderIconList),
+                                  ));
+                        },
+                      ),
+                      itemCount: folders.length,
                     ),
-                    itemCount: folders.length,
-                  ),
-                )
-              : Text('no folders')
-        ],
+                  )
+                : const Text('no items')
+          ],
+        ),
       ),
     );
   }

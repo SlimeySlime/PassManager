@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ffi';
 
 import 'package:passmanager/domain/passfolder.dart';
 import 'package:sqflite/sqflite.dart';
@@ -27,11 +26,11 @@ class FolderRepository {
 
   // FolderRepository() == instance;
   // factory FolderRepository() {
-  //   return instance;
+  //   return instance;P
   // }
 
   Future<Database> get database async {
-    // if (_db != null) return _db;
+    // if (_db != null) return _db;P
     _db = await open();
     return _db;
   }
@@ -81,11 +80,12 @@ class FolderRepository {
   }
 
   Future<int> insert(PassFolder folder) async {
+    print('to insert ${folder.folderName}');
     final db = await database;
     late int folderId;
     await db.transaction((txn) async {
       int id1 = await txn.rawInsert(
-          'INSERT INTO $_tablePassFolder ($_columnFolderName, $_columnFolderValue, ) VALUES (?, ?)',
+          'INSERT INTO $_tablePassFolder ( $_columnFolderName, $_columnFolderValue ) VALUES (?, ?);',
           [folder.folderName, folder.folderSubtitle]);
       // return id1;
       folderId = id1;

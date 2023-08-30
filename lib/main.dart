@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:passmanager/domain/folder_provider.dart';
 // import 'package:passmanager/domain/passfolder.dart';
 import 'package:passmanager/screen/folder_list.dart';
 import 'package:passmanager/screen/modal/add_folder_modal.dart';
 import 'package:passmanager/screen/pass_screen.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   // 네이티브 코드 사용시, 이벤트 호출로 위젯 바인딩 보장
@@ -23,16 +25,21 @@ class _PassManagerAppState extends State<PassManagerApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'PassManager',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => FolderProvider()),
+      ],
+      child: MaterialApp(
+        title: 'PassManager',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        home: const MainPage(title: 'PassManager'),
+        routes: {
+          PassScreen.routeName: (context) => PassScreen(),
+        },
       ),
-      home: const MainPage(title: 'PassManager'),
-      routes: {
-        PassScreen.routeName: (context) => PassScreen(),
-      },
     );
   }
 }

@@ -1,31 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:passmanager/domain/folder_provider.dart';
 import 'package:passmanager/domain/folder_repository.dart';
 import 'package:passmanager/domain/passfolder.dart';
 import 'package:passmanager/screen/pass_screen.dart';
+import 'package:provider/provider.dart';
 
-class AddFolderModal extends StatefulWidget {
-  // const AddFolderModal({super.key, required this.folderAdd});
+class AddFolderModal extends StatelessWidget {
+  // final void Function(String itemName) addFolder;
+  // const AddFolderModal({super.key, required this.addFolder});
   const AddFolderModal({super.key});
 
   @override
-  State<AddFolderModal> createState() => _AddFolderModalState();
-
-  // final Function folderAdd;
-}
-
-class _AddFolderModalState extends State<AddFolderModal> {
-  final _foldernameController = TextEditingController();
-
-  void _addFolder() async {
-    final FolderRepository repo = FolderRepository();
-    await repo.insert(PassFolder(_foldernameController.text, ''));
-    print(
-        'todo - this should add folder ${_foldernameController.text} and pop dialog');
-    // widget.folderAdd(_foldernameController.text);
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final _foldernameController = TextEditingController();
+    final fp = Provider.of<FolderProvider>(context);
+
     return Container(
       alignment: Alignment.centerLeft,
       height: 320,
@@ -69,8 +58,8 @@ class _AddFolderModalState extends State<AddFolderModal> {
                         backgroundColor:
                             MaterialStateProperty.all<Color>(Colors.blue)),
                     onPressed: () {
-                      _addFolder();
-                      // widget.folderAdd(_foldernameController.text);
+                      fp.insert(PassFolder(
+                          _foldernameController.text, "no value nows.."));
                       Navigator.of(context).pop();
                     },
                     child: const Text('추가하기',

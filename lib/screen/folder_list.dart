@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:passmanager/animation/folderscreen_navigate.dart';
+import 'package:passmanager/domain/folder_provider.dart';
 import 'package:passmanager/domain/folder_repository.dart';
 import 'package:passmanager/domain/iconList.dart';
 import 'package:passmanager/domain/passfolder.dart';
 import 'package:passmanager/screen/listview/folder_item.dart';
 import 'package:passmanager/screen/modal/folder_icon_modal.dart';
-import 'package:passmanager/screen/pass_screen.dart';
-import 'package:path/path.dart';
+// import 'package:passmanager/screen/pass_screen.dart';
+// import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 
 // import 'package:sqflite_common/sqlite_api.dart';
@@ -50,7 +51,6 @@ class _FolderListState extends State<FolderList> {
   }
 
   void addFolder(String folderName) async {
-    print('${searchController.text} should added (text)');
     var insertedId =
         await folderRepo.insert(PassFolder(searchKeyword, 'no value'));
     print('inserted ID : $insertedId');
@@ -60,11 +60,6 @@ class _FolderListState extends State<FolderList> {
     setState(() {
       folders = folderList;
     });
-  }
-
-  void deleteFolder(int id) async {
-    await folderRepo.deleteFolder(id);
-    _folderUpdate();
   }
 
   void folderIconUpdate(int iconData) {
@@ -85,6 +80,21 @@ class _FolderListState extends State<FolderList> {
 
   @override
   Widget build(BuildContext context) {
+    final fp = Provider.of<FolderProvider>(context);
+    var folderList = fp.items;
+
+    void dbTestInsert() async {
+      var id = fp.insert(PassFolder(searchKeyword, 'no value now'));
+      // var insertedId = await folderRepo.insert(PassFolder(searchKeyword, 'no value'));
+      // setState(() {
+      //   folders = folderList;
+      // });
+    }
+
+    void deleteFolder(int id) async {
+      fp.deleteFolder(id);
+    }
+
     return SizedBox(
       height: 1200,
       child: SingleChildScrollView(
@@ -127,14 +137,14 @@ class _FolderListState extends State<FolderList> {
                   Navigator.of(context).push(folderScreenAnimation());
                 },
                 child: const Text('to PassScreen')),
-            folders.isNotEmpty
+            folderList.isNotEmpty
                 ? SizedBox(
                     height: 600,
                     child: ListView.builder(
                       itemBuilder: (BuildContext ctx, int index) => FolderItem(
-                        folderName: folders[index].values.toList()[1],
+                        folderName: folderList[index].values.toList()[1],
                         deleting: () {
-                          deleteFolder(folders[index].values.toList()[0]);
+                          deleteFolder(folderList[index].values.toList()[0]);
                         },
                         iconClick: () {
                           showDialog(

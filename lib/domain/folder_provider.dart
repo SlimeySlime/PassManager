@@ -25,6 +25,7 @@ class FolderProvider with ChangeNotifier {
   late List<Map> _itemsList = [];
 
   List<Map> get items {
+    // notifyListeners();
     return _itemsList;
   }
   // FolderRepository._instance() {

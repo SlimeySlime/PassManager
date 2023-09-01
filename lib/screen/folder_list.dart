@@ -23,26 +23,27 @@ class FolderList extends StatefulWidget {
 }
 
 class _FolderListState extends State<FolderList> {
-  final folderRepo = FolderRepository();
+  // final folderRepo = FolderRepository();
 
   final searchController = TextEditingController();
   final FocusNode _searctTextFocus = FocusNode();
   var searchKeyword = '';
 
+  late final FolderProvider fp1;
   late List<Map> folders = [];
 
-  @override
-  void didChangeDependencies() async {
-    super.didChangeDependencies();
-    _folderUpdate();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   fp1 = Provider.of<FolderProvider>(context);
+  //   Future.delayed(Duration.zero, () {
+  //     _getInitialFolders();
+  //   });
+  // }
 
-  void _folderUpdate() async {
-    final folderUpdated = await folderRepo.getAllPassFolder();
-    setState(() {
-      folders = folderUpdated;
-    });
-  }
+  // void _getInitialFolders() async {
+  //   folders = await fp1.getAllPassFolder();
+  // }
 
   void onSearchTextChange() {
     setState(() {
@@ -50,49 +51,21 @@ class _FolderListState extends State<FolderList> {
     });
   }
 
-  void addFolder(String folderName) async {
-    var insertedId =
-        await folderRepo.insert(PassFolder(searchKeyword, 'no value'));
-    print('inserted ID : $insertedId');
-
-    var folderList = await folderRepo.getAllPassFolder();
-
-    setState(() {
-      folders = folderList;
-    });
-  }
-
   void folderIconUpdate(int iconData) {
     print('this will change iconData to $iconData');
-  }
-
-  void dbTestInsert() async {
-    var insertedId =
-        await folderRepo.insert(PassFolder(searchKeyword, 'no value'));
-    print('inserted ID : $insertedId');
-
-    var folderList = await folderRepo.getAllPassFolder();
-
-    setState(() {
-      folders = folderList;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     final fp = Provider.of<FolderProvider>(context);
-    var folderList = fp.items;
+    var folders = fp.items;
 
     void dbTestInsert() async {
-      var id = fp.insert(PassFolder(searchKeyword, 'no value now'));
-      // var insertedId = await folderRepo.insert(PassFolder(searchKeyword, 'no value'));
-      // setState(() {
-      //   folders = folderList;
-      // });
+      await fp.insert(PassFolder(searchKeyword, 'no value now'));
     }
 
     void deleteFolder(int id) async {
-      fp.deleteFolder(id);
+      await fp.deleteFolder(id);
     }
 
     return SizedBox(
@@ -137,14 +110,14 @@ class _FolderListState extends State<FolderList> {
                   Navigator.of(context).push(folderScreenAnimation());
                 },
                 child: const Text('to PassScreen')),
-            folderList.isNotEmpty
+            folders.isNotEmpty
                 ? SizedBox(
                     height: 600,
                     child: ListView.builder(
                       itemBuilder: (BuildContext ctx, int index) => FolderItem(
-                        folderName: folderList[index].values.toList()[1],
+                        folderName: folders[index].values.toList()[1],
                         deleting: () {
-                          deleteFolder(folderList[index].values.toList()[0]);
+                          deleteFolder(folders[index].values.toList()[0]);
                         },
                         iconClick: () {
                           showDialog(

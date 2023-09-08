@@ -29,8 +29,8 @@ class _FolderListState extends State<FolderList> {
   final FocusNode _searctTextFocus = FocusNode();
   var searchKeyword = '';
 
-  late final FolderProvider fp1;
-  late List<Map> folders = [];
+  late final FolderProvider _fp1;
+  late List<Map> _folders = [];
 
   // @override
   // void initState() {
@@ -43,6 +43,21 @@ class _FolderListState extends State<FolderList> {
 
   // void _getInitialFolders() async {
   //   folders = await fp1.getAllPassFolder();
+  // }
+
+  // var _isInit = true;
+  // var _isLoading = false;
+  // @override
+  // void didChangeDependencies() {
+  //   print('check didChangeDependencies');
+  //   _isLoading = true;
+  //   if (_isInit) {
+  //     _fp1.getAllPassFolder().then((value) => setState(() {
+  //           _isLoading = false;
+  //         }));
+  //   }
+  //   _isInit = false;
+  //   super.didChangeDependencies();
   // }
 
   void onSearchTextChange() {
@@ -58,14 +73,22 @@ class _FolderListState extends State<FolderList> {
   @override
   Widget build(BuildContext context) {
     final fp = Provider.of<FolderProvider>(context);
-    var folders = fp.items;
+    _fp1 = Provider.of<FolderProvider>(context);
+
+    // var folders = fp.items;
 
     void dbTestInsert() async {
-      await fp.insert(PassFolder(searchKeyword, 'no value now'));
+      // await fp.insert(PassFolder(searchKeyword, 'no value now'));
+      // _folders = fp.items;
+      await _fp1.insert(PassFolder(searchKeyword, 'no value now'));
+      _folders = _fp1.items;
     }
 
     void deleteFolder(int id) async {
-      await fp.deleteFolder(id);
+      // await fp.deleteFolder(id);
+      // _folders = fp.items;
+      await _fp1.deleteFolder(id);
+      _folders = _fp1.items;
     }
 
     return SizedBox(
@@ -110,14 +133,15 @@ class _FolderListState extends State<FolderList> {
                   Navigator.of(context).push(folderScreenAnimation());
                 },
                 child: const Text('to PassScreen')),
-            folders.isNotEmpty
+            _folders.isNotEmpty
+                // (_isInit == false)
                 ? SizedBox(
                     height: 600,
                     child: ListView.builder(
                       itemBuilder: (BuildContext ctx, int index) => FolderItem(
-                        folderName: folders[index].values.toList()[1],
+                        folderName: _folders[index].values.toList()[1],
                         deleting: () {
-                          deleteFolder(folders[index].values.toList()[0]);
+                          deleteFolder(_folders[index].values.toList()[0]);
                         },
                         iconClick: () {
                           showDialog(
@@ -129,7 +153,7 @@ class _FolderListState extends State<FolderList> {
                                   ));
                         },
                       ),
-                      itemCount: folders.length,
+                      itemCount: _folders.length,
                     ),
                   )
                 : const Text('no items')

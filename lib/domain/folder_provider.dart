@@ -25,7 +25,6 @@ class FolderProvider with ChangeNotifier {
   late List<Map> _itemsList = [];
 
   List<Map> get items {
-    // notifyListeners();
     return _itemsList;
   }
   // FolderRepository._instance() {
@@ -83,7 +82,6 @@ class FolderProvider with ChangeNotifier {
         }
       },
     );
-    print('_init database at $_dbPath');
     notifyListeners();
     return _db;
   }
@@ -133,20 +131,11 @@ class FolderProvider with ChangeNotifier {
     return list;
   }
 
-  // Future<List<Map>> getAllPassFolder() async {
-  //   final db = await database;
-  //   List<Map> list = await db.query(
-  //     _tablePassFolder,
-  //     columns: [_columnFolderName, _columnFolderValue],
-  //   );
-  //   print(list);
-  //   return list;
-  // }
-
   Future<List<Map>> getAllPassFolder() async {
     final db = await database;
     List<Map> list = await db.rawQuery('SELECT * FROM $_tablePassFolder');
-    print('get all passfolder $list');
+    _itemsList = list;
+    notifyListeners();
     return list;
   }
 }

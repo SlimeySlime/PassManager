@@ -22,10 +22,13 @@ class FolderProvider with ChangeNotifier {
   late Database _db;
 
   late Map<String, PassFolder> _itemsMap = Map();
-  late List<Map> _itemsList = [];
+  late List<Map> _itemList = [];
 
   List<Map> get items {
-    return _itemsList;
+    if (_itemList.length == 0) {
+      getAllPassFolder();
+    }
+    return _itemList;
   }
   // FolderRepository._instance() {
   //   open();
@@ -98,7 +101,7 @@ class FolderProvider with ChangeNotifier {
       folderId = id1;
     });
 
-    _itemsList = await getAllPassFolder();
+    _itemList = await getAllPassFolder();
     notifyListeners();
 
     await db.close();
@@ -114,7 +117,7 @@ class FolderProvider with ChangeNotifier {
     var result = await db
         .delete(_tablePassFolder, where: '$_columnId = ?', whereArgs: [id]);
 
-    _itemsList = await getAllPassFolder();
+    _itemList = await getAllPassFolder();
     notifyListeners();
     return result;
   }
@@ -134,7 +137,7 @@ class FolderProvider with ChangeNotifier {
   Future<List<Map>> getAllPassFolder() async {
     final db = await database;
     List<Map> list = await db.rawQuery('SELECT * FROM $_tablePassFolder');
-    _itemsList = list;
+    _itemList = list;
     notifyListeners();
     return list;
   }

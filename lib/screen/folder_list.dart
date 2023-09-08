@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:passmanager/animation/folderscreen_navigate.dart';
 import 'package:passmanager/domain/folder_provider.dart';
-import 'package:passmanager/domain/folder_repository.dart';
 import 'package:passmanager/domain/iconList.dart';
 import 'package:passmanager/domain/passfolder.dart';
 import 'package:passmanager/screen/listview/folder_item.dart';
 import 'package:passmanager/screen/modal/folder_icon_modal.dart';
-// import 'package:passmanager/screen/pass_screen.dart';
-// import 'package:path/path.dart';
 import 'package:provider/provider.dart';
-
-// import 'package:sqflite_common/sqlite_api.dart';
-// import 'package:sqflite/sqflite.dart';
 
 class FolderList extends StatefulWidget {
   static const String routeName = '/folder_list';
 
   FolderList({super.key});
+
+  // late final FolderProvider _fpMain = Provider.of<FolderProvider>(context);
 
   @override
   State<FolderList> createState() => _FolderListState();
@@ -29,35 +25,23 @@ class _FolderListState extends State<FolderList> {
   final FocusNode _searctTextFocus = FocusNode();
   var searchKeyword = '';
 
-  late final FolderProvider _fp1;
+  late final FolderProvider _fp = Provider.of<FolderProvider>(context);
   late List<Map> _folders = [];
+  late Future _foldersFuture = _fp.getAllPassFolder();
 
   // @override
   // void initState() {
   //   super.initState();
-  //   fp1 = Provider.of<FolderProvider>(context);
+  //   print("FolderListState initState()");
+  //   _fp1 = Provider.of<FolderProvider>(context);
   //   Future.delayed(Duration.zero, () {
   //     _getInitialFolders();
+  //     print("delayed initState by getAllPassFolder");
   //   });
   // }
 
   // void _getInitialFolders() async {
-  //   folders = await fp1.getAllPassFolder();
-  // }
-
-  // var _isInit = true;
-  // var _isLoading = false;
-  // @override
-  // void didChangeDependencies() {
-  //   print('check didChangeDependencies');
-  //   _isLoading = true;
-  //   if (_isInit) {
-  //     _fp1.getAllPassFolder().then((value) => setState(() {
-  //           _isLoading = false;
-  //         }));
-  //   }
-  //   _isInit = false;
-  //   super.didChangeDependencies();
+  //   _folders = await _fp1.getAllPassFolder();
   // }
 
   void onSearchTextChange() {
@@ -72,23 +56,32 @@ class _FolderListState extends State<FolderList> {
 
   @override
   Widget build(BuildContext context) {
-    final fp = Provider.of<FolderProvider>(context);
-    _fp1 = Provider.of<FolderProvider>(context);
+    // final fp = Provider.of<FolderProvider>(context, listen: false);
+    print("_FolderList build()");
+    print("fp.items.length ${_fp.items.length}");
 
-    // var folders = fp.items;
+    var _folders = _fp.items;
 
-    void dbTestInsert() async {
-      // await fp.insert(PassFolder(searchKeyword, 'no value now'));
-      // _folders = fp.items;
-      await _fp1.insert(PassFolder(searchKeyword, 'no value now'));
-      _folders = _fp1.items;
+    void insertFolderFuture() {
+      _fp
+          .insert(PassFolder(searchKeyword, 'no value now'))
+          .then((value) => _foldersFuture = _fp.getAllPassFolder());
+    }
+
+    void insertFolder() async {
+      await _fp.insert(PassFolder(searchKeyword, 'no value now'));
+      _folders = await _fp.getAllPassFolder();
+    }
+
+    void deleteFolderFuture(int id) {
+      _fp
+          .deleteFolder(id)
+          .then((value) => _foldersFuture = _fp.getAllPassFolder());
     }
 
     void deleteFolder(int id) async {
-      // await fp.deleteFolder(id);
-      // _folders = fp.items;
-      await _fp1.deleteFolder(id);
-      _folders = _fp1.items;
+      _fp.deleteFolder(id);
+      _folders = await _fp.getAllPassFolder();
     }
 
     return SizedBox(
@@ -125,7 +118,7 @@ class _FolderListState extends State<FolderList> {
               ),
             ),
             TextButton(
-                onPressed: () => dbTestInsert(),
+                onPressed: () => insertFolder(),
                 child: Text('db testing insert $searchKeyword')),
             TextButton(
                 onPressed: () {
@@ -133,6 +126,7 @@ class _FolderListState extends State<FolderList> {
                   Navigator.of(context).push(folderScreenAnimation());
                 },
                 child: const Text('to PassScreen')),
+
             _folders.isNotEmpty
                 // (_isInit == false)
                 ? SizedBox(
@@ -156,7 +150,39 @@ class _FolderListState extends State<FolderList> {
                       itemCount: _folders.length,
                     ),
                   )
-                : const Text('no items')
+                : const Text('no items'),
+
+            // FutureBuilder(
+            //   future: _foldersFuture,
+            //   builder: (context, snapshot) {
+            //     if (snapshot.hasData) {
+            //       return SizedBox(
+            //         height: 600,
+            //         child: ListView.builder(
+            //           itemBuilder: (BuildContext ctx, int index) => FolderItem(
+            //             folderName: snapshot.data![index].values.toList()[1],
+            //             deleting: () {
+            //               deleteFolder(
+            //                   snapshot.data![index].values.toList()[0]);
+            //             },
+            //             iconClick: () {
+            //               showDialog(
+            //                   context: context,
+            //                   builder: (BuildContext context) => Dialog(
+            //                         child: FolderIconModal(
+            //                             iconClick: folderIconUpdate,
+            //                             iconDatas: FolderIconList),
+            //                       ));
+            //             },
+            //           ),
+            //           itemCount: snapshot.data!.length,
+            //         ),
+            //       );
+            //     } else {
+            //       return const CircularProgressIndicator();
+            //     }
+            //   },
+            // )
           ],
         ),
       ),

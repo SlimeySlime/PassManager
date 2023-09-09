@@ -8,10 +8,13 @@ class PassScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Map<String, Object> folderInfo =
+        ModalRoute.of(context)?.settings.arguments as Map<String, Object>;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,
-        title: Text('폴더'),
+        title: Text('${folderInfo['name']}'),
       ),
       body: Center(
         child: Text('just passes'),

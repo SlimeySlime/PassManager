@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:passmanager/animation/folderscreen_navigate.dart';
 import 'package:passmanager/domain/folder_provider.dart';
 // import 'package:passmanager/domain/passfolder.dart';
 import 'package:passmanager/screen/folder_list.dart';
@@ -38,6 +39,15 @@ class _PassManagerAppState extends State<PassManagerApp> {
         home: const MainPage(title: 'PassManager'),
         routes: {
           PassScreen.routeName: (context) => PassScreen(),
+        },
+        onGenerateRoute: (settings) {
+          switch (settings.name) {
+            case PassScreen.routeName:
+              print('onGenerateRoute, switch to PassScreen.routeName');
+              return folderScreenAnimation();
+            default:
+              return null;
+          }
         },
       ),
     );

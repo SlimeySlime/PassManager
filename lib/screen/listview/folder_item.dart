@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:passmanager/animation/folderscreen_navigate.dart';
 import 'package:passmanager/domain/passfolder.dart';
 import 'package:passmanager/screen/pass_screen.dart';
 
@@ -9,9 +10,11 @@ class FolderItem extends StatelessWidget {
   // final PassFolder folder;
   const FolderItem(
       {super.key,
+      required this.folderId,
       required this.folderName,
       required this.deleting,
       required this.iconClick});
+  final int folderId;
   final String folderName;
   final Function deleting;
   final Function iconClick;
@@ -40,11 +43,12 @@ class FolderItem extends StatelessWidget {
             icon: const Icon(Icons.delete),
             onPressed: () {
               print('pressed');
-              print('ok');
               deleting();
             }),
         onTap: () {
-          Navigator.of(context).pushNamed(PassScreen.routeName);
+          Navigator.pushNamed(context, PassScreen.routeName,
+              arguments: {'id': folderId, 'name': folderName});
+          // Navigator.of(context).push(folderScreenAnimation(folderId));
         },
       ),
     );

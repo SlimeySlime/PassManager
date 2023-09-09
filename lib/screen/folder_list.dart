@@ -29,21 +29,6 @@ class _FolderListState extends State<FolderList> {
   late List<Map> _folders = [];
   late Future _foldersFuture = _fp.getAllPassFolder();
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   print("FolderListState initState()");
-  //   _fp1 = Provider.of<FolderProvider>(context);
-  //   Future.delayed(Duration.zero, () {
-  //     _getInitialFolders();
-  //     print("delayed initState by getAllPassFolder");
-  //   });
-  // }
-
-  // void _getInitialFolders() async {
-  //   _folders = await _fp1.getAllPassFolder();
-  // }
-
   void onSearchTextChange() {
     setState(() {
       searchKeyword = searchController.text;
@@ -58,31 +43,32 @@ class _FolderListState extends State<FolderList> {
   Widget build(BuildContext context) {
     // final fp = Provider.of<FolderProvider>(context, listen: false);
     print("_FolderList build()");
-    print("fp.items.length ${_fp.items.length}");
-
-    var _folders = _fp.items;
-
-    void insertFolderFuture() {
-      _fp
-          .insert(PassFolder(searchKeyword, 'no value now'))
-          .then((value) => _foldersFuture = _fp.getAllPassFolder());
-    }
+    _folders = _fp.items;
 
     void insertFolder() async {
       await _fp.insert(PassFolder(searchKeyword, 'no value now'));
       _folders = await _fp.getAllPassFolder();
     }
 
-    void deleteFolderFuture(int id) {
-      _fp
-          .deleteFolder(id)
-          .then((value) => _foldersFuture = _fp.getAllPassFolder());
-    }
-
     void deleteFolder(int id) async {
       _fp.deleteFolder(id);
       _folders = await _fp.getAllPassFolder();
     }
+
+    // AlertDialog deleteConfirm = AlertDialog(
+    //   title: const Text("정말 삭제합니까?"),
+    //   content: Text("really? "),
+    //   actions: [
+    //     const ElevatedButton(
+    //       onPressed: null,
+    //       child: Text("취소"),
+    //     ),
+    //     ElevatedButton(
+    //       onPressed: deleteFolder(3),
+    //       child: const Text("삭제하기"),
+    //     )
+    //   ],
+    // );
 
     return SizedBox(
       height: 1200,
@@ -120,22 +106,41 @@ class _FolderListState extends State<FolderList> {
             TextButton(
                 onPressed: () => insertFolder(),
                 child: Text('db testing insert $searchKeyword')),
-            TextButton(
-                onPressed: () {
-                  // Navigator.of(context).pushNamed(PassScreen.routeName);
-                  Navigator.of(context).push(folderScreenAnimation());
-                },
-                child: const Text('to PassScreen')),
-
-            _folders.isNotEmpty
-                // (_isInit == false)
+            _fp.items.isNotEmpty
                 ? SizedBox(
                     height: 600,
                     child: ListView.builder(
+                      // TODO - toList to toMap needed
                       itemBuilder: (BuildContext ctx, int index) => FolderItem(
-                        folderName: _folders[index].values.toList()[1],
+                        folderId: _fp.items[index].values.toList()[0],
+                        folderName: _fp.items[index].values.toList()[1],
                         deleting: () {
-                          deleteFolder(_folders[index].values.toList()[0]);
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text("정말 삭제합니까?"),
+                                content: const Text("삭제된 정보는 복구가 불가능합니다."),
+                                actions: [
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text("취소"),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      deleteFolder(
+                                          _fp.items[index].values.toList()[0]);
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text("삭제하기"),
+                                  )
+                                ],
+                              );
+                            },
+                          );
+                          // deleteFolder(_fp.items[index].values.toList()[0]);
                         },
                         iconClick: () {
                           showDialog(
@@ -147,42 +152,10 @@ class _FolderListState extends State<FolderList> {
                                   ));
                         },
                       ),
-                      itemCount: _folders.length,
+                      itemCount: _fp.items.length,
                     ),
                   )
                 : const Text('no items'),
-
-            // FutureBuilder(
-            //   future: _foldersFuture,
-            //   builder: (context, snapshot) {
-            //     if (snapshot.hasData) {
-            //       return SizedBox(
-            //         height: 600,
-            //         child: ListView.builder(
-            //           itemBuilder: (BuildContext ctx, int index) => FolderItem(
-            //             folderName: snapshot.data![index].values.toList()[1],
-            //             deleting: () {
-            //               deleteFolder(
-            //                   snapshot.data![index].values.toList()[0]);
-            //             },
-            //             iconClick: () {
-            //               showDialog(
-            //                   context: context,
-            //                   builder: (BuildContext context) => Dialog(
-            //                         child: FolderIconModal(
-            //                             iconClick: folderIconUpdate,
-            //                             iconDatas: FolderIconList),
-            //                       ));
-            //             },
-            //           ),
-            //           itemCount: snapshot.data!.length,
-            //         ),
-            //       );
-            //     } else {
-            //       return const CircularProgressIndicator();
-            //     }
-            //   },
-            // )
           ],
         ),
       ),

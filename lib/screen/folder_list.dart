@@ -35,18 +35,20 @@ class _FolderListState extends State<FolderList> {
     });
   }
 
-  void folderIconUpdate(int iconData) {
-    print('this will change iconData to $iconData');
+  void testing() {
+    print(_fp.items);
   }
 
   @override
   Widget build(BuildContext context) {
-    // final fp = Provider.of<FolderProvider>(context, listen: false);
+    double screenHeight = MediaQuery.of(context).size.height;
     print("_FolderList build()");
     _folders = _fp.items;
+    late PassFolder _focusedFolder;
 
     void insertFolder() async {
-      await _fp.insert(PassFolder(searchKeyword, 'no value now'));
+      await _fp
+          .insert(PassFolder(searchKeyword, folderSubtitle: 'no value now'));
       _folders = await _fp.getAllPassFolder();
     }
 
@@ -55,23 +57,19 @@ class _FolderListState extends State<FolderList> {
       _folders = await _fp.getAllPassFolder();
     }
 
-    // AlertDialog deleteConfirm = AlertDialog(
-    //   title: const Text("정말 삭제합니까?"),
-    //   content: Text("really? "),
-    //   actions: [
-    //     const ElevatedButton(
-    //       onPressed: null,
-    //       child: Text("취소"),
-    //     ),
-    //     ElevatedButton(
-    //       onPressed: deleteFolder(3),
-    //       child: const Text("삭제하기"),
-    //     )
-    //   ],
-    // );
+    void folderIconUpdate(int iconData) {
+      print('this will change iconData to $iconData');
+      _focusedFolder.folderIconData = iconData;
+      _fp.updateFolder(_focusedFolder);
+    }
+
+    void setCurrentFolder(PassFolder folder) {
+      print('current focused folder : ${folder}');
+      _focusedFolder = folder;
+    }
 
     return SizedBox(
-      height: 1200,
+      height: screenHeight,
       child: SingleChildScrollView(
         child: Column(
           children: [
@@ -104,55 +102,64 @@ class _FolderListState extends State<FolderList> {
               ),
             ),
             TextButton(
-                onPressed: () => insertFolder(),
-                child: Text('db testing insert $searchKeyword')),
+                onPressed: () => testing(),
+                child: Text('db testing $searchKeyword')),
             _fp.items.isNotEmpty
                 ? SizedBox(
-                    height: 600,
-                    child: ListView.builder(
-                      // TODO - toList to toMap needed
-                      itemBuilder: (BuildContext ctx, int index) => FolderItem(
-                        folderId: _fp.items[index].values.toList()[0],
-                        folderName: _fp.items[index].values.toList()[1],
-                        deleting: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                title: const Text("정말 삭제합니까?"),
-                                content: const Text("삭제된 정보는 복구가 불가능합니다."),
-                                actions: [
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text("취소"),
-                                  ),
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      deleteFolder(
-                                          _fp.items[index].values.toList()[0]);
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: const Text("삭제하기"),
-                                  )
-                                ],
-                              );
-                            },
-                          );
-                          // deleteFolder(_fp.items[index].values.toList()[0]);
-                        },
-                        iconClick: () {
-                          showDialog(
+                    child: Container(
+                      height: 500,
+                      child: ListView.builder(
+                        // TODO - toList to toMap needed
+                        itemBuilder: (BuildContext ctx, int index) =>
+                            FolderItem(
+                          folderInfo: PassFolder.fromMap(_fp.items[index]),
+                          folderId: _fp.items[index].values.toList()[0],
+                          folderName: _fp.items[index].values.toList()[1],
+                          deleting: () {
+                            showDialog(
                               context: context,
-                              builder: (BuildContext context) => Dialog(
-                                    child: FolderIconModal(
-                                        iconClick: folderIconUpdate,
-                                        iconDatas: FolderIconList),
-                                  ));
-                        },
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: const Text("항목 삭제?"),
+                                  content: Text(
+                                      "${_fp.items[index].values.toList()[1]} 항목을 삭제합니까? \n 하위 항목들이 모두 삭제됩니다."),
+                                  actions: [
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text("취소"),
+                                    ),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        deleteFolder(_fp.items[index].values
+                                            .toList()[0]);
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: const Text("삭제하기"),
+                                    )
+                                  ],
+                                );
+                              },
+                            );
+                            // deleteFolder(_fp.items[index].values.toList()[0]);
+                          },
+                          iconClick: () {
+                            print(_fp.items[index]);
+                            setCurrentFolder(
+                                PassFolder.fromMap(_fp.items[index]));
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) => Dialog(
+                                      child: FolderIconModal(
+                                          // iconClick: folderIconUpdate(PassFolder.fromMap(_fp.items[index]), 5),
+                                          iconClick: folderIconUpdate,
+                                          iconDatas: FolderIconList),
+                                    ));
+                          },
+                        ),
+                        itemCount: _fp.items.length,
                       ),
-                      itemCount: _fp.items.length,
                     ),
                   )
                 : const Text('no items'),

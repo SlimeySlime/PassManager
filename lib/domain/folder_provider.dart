@@ -59,7 +59,7 @@ class FolderProvider with ChangeNotifier {
 
     _db = await openDatabase(
       _dbPath,
-      version: 2,
+      version: 3,
       onCreate: (_db, version) async => {
         await _db.execute('''
             CREATE TABLE PassFolder (
@@ -95,9 +95,8 @@ class FolderProvider with ChangeNotifier {
     late int folderId;
     await db.transaction((txn) async {
       int id1 = await txn.rawInsert(
-          'INSERT INTO $_tablePassFolder ( $_columnFolderName, $_columnFolderValue ) VALUES (?, ?);',
+          'INSERT INTO $_tablePassFolder ( $_columnFolderName, $_columnFolderValue, $_columnFolderIconData ) VALUES (?, ?, 984246);',
           [folder.folderName, folder.folderSubtitle]);
-      // return id1;
       folderId = id1;
     });
 
@@ -106,10 +105,22 @@ class FolderProvider with ChangeNotifier {
 
     await db.close();
     return folderId;
-    // print(result);
-    // return result;
-    // return await db.insert(_tablePassFolder, passfolder.toMap(),
-    //     conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<int> updateFolder(PassFolder folder) async {
+    final db = await database;
+    var folderMap = folder.toMap();
+    print('update folderMap');
+    print(folderMap);
+
+    var result = await db.update(_tablePassFolder, folderMap,
+        where: 'id = ?', whereArgs: [folderMap['id']]);
+
+    _itemList = await getAllPassFolder();
+    notifyListeners();
+
+    await db.close();
+    return result;
   }
 
   Future deleteFolder(int id) async {

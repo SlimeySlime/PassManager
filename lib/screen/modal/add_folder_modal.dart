@@ -58,8 +58,7 @@ class AddFolderModal extends StatelessWidget {
                         backgroundColor:
                             MaterialStateProperty.all<Color>(Colors.blue)),
                     onPressed: () {
-                      fp.insert(PassFolder(
-                          _foldernameController.text, "no value nows.."));
+                      fp.insert(PassFolder(_foldernameController.text));
                       Navigator.of(context).pop();
                     },
                     child: const Text('추가하기',

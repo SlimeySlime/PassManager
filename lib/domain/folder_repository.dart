@@ -20,15 +20,6 @@ class FolderRepository {
 
   late Database _db;
 
-  // FolderRepository._instance() {
-  //   open();
-  // }
-
-  // FolderRepository() == instance;
-  // factory FolderRepository() {
-  //   return instance;P
-  // }
-
   Future<Database> get database async {
     // if (_db != null) return _db;P
     _db = await open();
@@ -92,16 +83,29 @@ class FolderRepository {
     });
     await db.close();
     return folderId;
-    // print(result);
-    // return result;
-    // return await db.insert(_tablePassFolder, passfolder.toMap(),
-    //     conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future deleteFolder(int id) async {
+  Future deleteFolder(PassFolder folder) async {
     final db = await database;
-    var result = await db
-        .delete(_tablePassFolder, where: '$_columnId = ?', whereArgs: [id]);
+    await db.transaction((txn) async {
+      int id1 = await txn.rawInsert(
+          'INSERT INTO $_tablePassFolder ( $_columnFolderName, $_columnFolderValue ) VALUES (?, ?);',
+          [folder.folderName, folder.folderSubtitle]);
+      // return id1;
+    });
+
+    return null;
+  }
+
+  Future updateFolder(PassFolder folder) async {
+    final db = await database;
+    var folderMap = folder.toMap();
+    print('update folderMap');
+    print(folderMap);
+
+    var result = await db.update(_tablePassFolder, folderMap,
+        where: 'id = ?', whereArgs: [folderMap['id']]);
+
     return result;
   }
 

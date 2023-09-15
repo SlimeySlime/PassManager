@@ -21,11 +21,11 @@ class FolderProvider with ChangeNotifier {
 
   late Database _db;
 
-  late Map<String, PassFolder> _itemsMap = Map();
+  late final Map<String, PassFolder> _itemsMap = {};
   late List<Map> _itemList = [];
 
   List<Map> get items {
-    if (_itemList.length == 0) {
+    if (_itemList.isEmpty) {
       getAllPassFolder();
     }
     return _itemList;
@@ -48,7 +48,7 @@ class FolderProvider with ChangeNotifier {
   // FutureOr<Void> _onUpgrade(Database db, int oldVer, int newVer) {}
 
   Future open() async {
-    var _dbPath = join(await getDatabasesPath(), _dbPathName);
+    var dbPath = join(await getDatabasesPath(), _dbPathName);
     const createQuery = '''
           'CREATE TABLE $_tablePassFolder (
             $_columnId INTEGER PRIMEY KEY AUTOINCREMENT,
@@ -58,10 +58,10 @@ class FolderProvider with ChangeNotifier {
         ''';
 
     _db = await openDatabase(
-      _dbPath,
+      dbPath,
       version: 3,
-      onCreate: (_db, version) async => {
-        await _db.execute('''
+      onCreate: (db, version) async => {
+        await db.execute('''
             CREATE TABLE PassFolder (
               id INTEGER PRIMARY KEY, 
               $_columnFolderName TEXT NOT NULL, 

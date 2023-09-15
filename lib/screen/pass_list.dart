@@ -20,8 +20,8 @@ class _PassListState extends State<PassList> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
-                    onPressed: () {}, icon: Icon(Icons.abc), iconSize: 32.0),
-                Text(
+                    onPressed: () {}, icon: const Icon(Icons.abc), iconSize: 32.0),
+                const Text(
                   'ok',
                   style: TextStyle(fontSize: 48.0),
                 )

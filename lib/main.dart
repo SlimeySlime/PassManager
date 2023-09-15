@@ -38,7 +38,7 @@ class _PassManagerAppState extends State<PassManagerApp> {
         ),
         home: const MainPage(title: 'PassManager'),
         routes: {
-          PassScreen.routeName: (context) => PassScreen(),
+          PassScreen.routeName: (context) => const PassScreen(),
         },
         onGenerateRoute: (settings) {
           switch (settings.name) {
@@ -70,13 +70,11 @@ class _MainPageState extends State<MainPage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Center(
-        child: FolderList(),
-      ),
+      body: FolderList(),
       floatingActionButton: FloatingActionButton(
         onPressed: () => showDialog(
           context: context,
-          builder: (BuildContext context) => Dialog(
+          builder: (BuildContext context) => const Dialog(
             child: AddFolderModal(),
           ),
         ),
@@ -90,7 +88,7 @@ class _MainPageState extends State<MainPage> {
 Route _createRoute() {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) {
-      return PassScreen();
+      return const PassScreen();
     },
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       const begin = Offset(0.0, 1.0);

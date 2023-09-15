@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:passmanager/animation/folderscreen_navigate.dart';
 import 'package:passmanager/domain/folder_provider.dart';
 import 'package:passmanager/domain/iconList.dart';
 import 'package:passmanager/domain/passfolder.dart';
@@ -10,7 +9,7 @@ import 'package:provider/provider.dart';
 class FolderList extends StatefulWidget {
   static const String routeName = '/folder_list';
 
-  FolderList({super.key});
+  const FolderList({super.key});
 
   // late final FolderProvider _fpMain = Provider.of<FolderProvider>(context);
 
@@ -27,7 +26,12 @@ class _FolderListState extends State<FolderList> {
 
   late final FolderProvider _fp = Provider.of<FolderProvider>(context);
   late List<Map> _folders = [];
-  late Future _foldersFuture = _fp.getAllPassFolder();
+  late final Future _foldersFuture = _fp.getAllPassFolder();
+
+  late RenderBox? renderBox;
+  late double _renderHeight;
+  late double _screenHeight;
+  late double _screenWidth;
 
   void onSearchTextChange() {
     setState(() {
@@ -36,15 +40,21 @@ class _FolderListState extends State<FolderList> {
   }
 
   void testing() {
-    print(_fp.items);
+    // print(_fp.items);
+    // print('_screenSize : ${_screenHeight} ${_screenWidth}');
+    // print('renderBox.size ${renderBox!.size}');
   }
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
+    _screenHeight = MediaQuery.of(context).size.height;
+    _screenWidth = MediaQuery.of(context).size.width;
+    // renderBox = context.findRenderObject() as RenderBox;
+    // _renderHeight = renderBox!.size.height;
+
     print("_FolderList build()");
     _folders = _fp.items;
-    late PassFolder _focusedFolder;
+    late PassFolder focusedFolder;
 
     void insertFolder() async {
       await _fp
@@ -59,18 +69,17 @@ class _FolderListState extends State<FolderList> {
 
     void folderIconUpdate(int iconData) {
       print('this will change iconData to $iconData');
-      _focusedFolder.folderIconData = iconData;
-      _fp.updateFolder(_focusedFolder);
+      focusedFolder.folderIconData = iconData;
+      _fp.updateFolder(focusedFolder);
     }
 
     void setCurrentFolder(PassFolder folder) {
-      print('current focused folder : ${folder}');
-      _focusedFolder = folder;
+      print('current focused folder : $folder');
+      focusedFolder = folder;
     }
 
-    return SizedBox(
-      height: screenHeight,
-      child: SingleChildScrollView(
+    return SingleChildScrollView(
+      child: Expanded(
         child: Column(
           children: [
             Padding(
@@ -81,7 +90,7 @@ class _FolderListState extends State<FolderList> {
                 children: [
                   const Padding(
                     padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
-                    child: Icon(Icons.search),
+                    child: Icon(Icons.search, size: 32.0),
                   ),
                   Flexible(
                     child: TextField(
@@ -102,70 +111,72 @@ class _FolderListState extends State<FolderList> {
               ),
             ),
             TextButton(
-                onPressed: () => testing(),
-                child: Text('db testing $searchKeyword')),
+                onPressed: () => testing(), child: const Text('debug test')),
             _fp.items.isNotEmpty
-                ? SizedBox(
-                    child: Container(
-                      height: 500,
-                      child: ListView.builder(
-                        // TODO - toList to toMap needed
-                        itemBuilder: (BuildContext ctx, int index) =>
-                            FolderItem(
-                          folderInfo: PassFolder.fromMap(_fp.items[index]),
-                          folderId: _fp.items[index].values.toList()[0],
-                          folderName: _fp.items[index].values.toList()[1],
-                          deleting: () {
-                            showDialog(
-                              context: context,
-                              builder: (context) {
-                                return AlertDialog(
-                                  title: const Text("항목 삭제?"),
-                                  content: Text(
-                                      "${_fp.items[index].values.toList()[1]} 항목을 삭제합니까? \n 하위 항목들이 모두 삭제됩니다."),
-                                  actions: [
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text("취소"),
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        deleteFolder(_fp.items[index].values
-                                            .toList()[0]);
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text("삭제하기"),
-                                    )
-                                  ],
-                                );
-                              },
-                            );
-                            // deleteFolder(_fp.items[index].values.toList()[0]);
-                          },
-                          iconClick: () {
-                            print(_fp.items[index]);
-                            setCurrentFolder(
-                                PassFolder.fromMap(_fp.items[index]));
-                            showDialog(
-                                context: context,
-                                builder: (BuildContext context) => Dialog(
-                                      child: FolderIconModal(
-                                          // iconClick: folderIconUpdate(PassFolder.fromMap(_fp.items[index]), 5),
-                                          iconClick: folderIconUpdate,
-                                          iconDatas: FolderIconList),
-                                    ));
-                          },
-                        ),
-                        itemCount: _fp.items.length,
-                      ),
-                    ),
-                  )
-                : const Text('no items'),
+                ? folderListView(
+                    context, deleteFolder, setCurrentFolder, folderIconUpdate)
+                : const Text('폴더를 하나 만들어주세요'),
           ],
         ),
       ),
+    );
+  }
+
+  ListView folderListView(
+      BuildContext context,
+      void deleteFolder(int id),
+      void setCurrentFolder(PassFolder folder),
+      void folderIconUpdate(int iconData)) {
+    return ListView.builder(
+      shrinkWrap: true,
+      // TODO - toList to toMap needed
+      itemBuilder: (BuildContext ctx, int index) => FolderItem(
+        folderInfo: PassFolder.fromMap(_fp.items[index]),
+        folderId: _fp.items[index].values.toList()[0],
+        folderName: _fp.items[index].values.toList()[1],
+        deleting: () {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text("항목 삭제?"),
+                content: Text(
+                    "${_fp.items[index].values.toList()[1]} 항목을 삭제합니까? \n 하위 항목들이 모두 삭제됩니다."),
+                actions: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("취소"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      deleteFolder(_fp.items[index].values.toList()[0]);
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text("삭제하기"),
+                  )
+                ],
+              );
+            },
+          );
+          // deleteFolder(_fp.items[index].values.toList()[0]);
+        },
+        iconClick: () {
+          print(_fp.items[index]);
+          setCurrentFolder(PassFolder.fromMap(_fp.items[index]));
+          showDialog(
+              context: context,
+              builder: (BuildContext context) => Dialog(
+                    child: FolderIconModal(
+                        // iconClick: folderIconUpdate(PassFolder.fromMap(_fp.items[index]), 5),
+                        iconClick: folderIconUpdate,
+                        iconDatas: FolderIconList),
+                  ));
+        },
+      ),
+      itemCount: _fp.items.length,
+      // ),
     );
   }
 }

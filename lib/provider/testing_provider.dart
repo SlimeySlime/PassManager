@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:passmanager/domain/passfolder.dart';
 
 class Testing_Provider with ChangeNotifier {
-  late Map<String, PassFolder> _passfolders = Map();
+  late final Map<String, PassFolder> _passfolders = {};
 
   Map<String, PassFolder> get passfolders {
     return _passfolders;

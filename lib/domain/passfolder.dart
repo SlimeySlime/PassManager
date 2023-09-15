@@ -1,7 +1,4 @@
 // import 'dart:d';
-import 'package:path/path.dart';
-import 'dart:async';
-import 'package:sqflite/sqflite.dart';
 
 // static const String _columnId = 'id';
 // static const String _tablePassFolder = 'PassFolder';
@@ -47,7 +44,7 @@ class PassFolder {
 
   @override
   String toString() {
-    return '${this.folderName} - ${this.folderIconData} - ${this.id}';
+    return '$folderName - $folderIconData - $id';
   }
 
   factory PassFolder.fromMap(Map<dynamic, dynamic> map) {

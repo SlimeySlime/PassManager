@@ -29,7 +29,7 @@ class FolderRepository {
   // FutureOr<Void> _onUpgrade(Database db, int oldVer, int newVer) {}
 
   Future open() async {
-    var _dbPath = join(await getDatabasesPath(), _dbPathName);
+    var dbPath = join(await getDatabasesPath(), _dbPathName);
     const createQuery = '''
           'CREATE TABLE $_tablePassFolder (
             $_columnId INTEGER PRIMEY KEY AUTOINCREMENT,
@@ -39,10 +39,10 @@ class FolderRepository {
         ''';
 
     _db = await openDatabase(
-      _dbPath,
+      dbPath,
       version: 2,
-      onCreate: (_db, version) async => {
-        await _db.execute('''
+      onCreate: (db, version) async => {
+        await db.execute('''
             CREATE TABLE PassFolder (
               id INTEGER PRIMARY KEY, 
               $_columnFolderName TEXT NOT NULL, 
@@ -66,7 +66,7 @@ class FolderRepository {
         }
       },
     );
-    print('_init database at $_dbPath');
+    print('_init database at $dbPath');
     return _db;
   }
 

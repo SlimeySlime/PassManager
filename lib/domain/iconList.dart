@@ -15,7 +15,7 @@ final List<Icon> FolderIconList = [
   const Icon(Icons.audio_file),
 
   const Icon(Icons.delete),
-  Icon(
+  const Icon(
     IconData(984246, fontFamily: 'MaterialIcons'),
   ),
 ];

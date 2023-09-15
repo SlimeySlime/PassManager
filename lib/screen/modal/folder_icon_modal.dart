@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:passmanager/domain/passfolder.dart';
 import 'package:passmanager/util/regex.dart';
 
 class FolderIconModal extends StatelessWidget {

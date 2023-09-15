@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:passmanager/domain/folder_provider.dart';
-import 'package:passmanager/domain/folder_repository.dart';
 import 'package:passmanager/domain/passfolder.dart';
-import 'package:passmanager/screen/pass_screen.dart';
 import 'package:provider/provider.dart';
 
 class AddFolderModal extends StatelessWidget {
@@ -12,7 +10,7 @@ class AddFolderModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _foldernameController = TextEditingController();
+    final foldernameController = TextEditingController();
     final fp = Provider.of<FolderProvider>(context);
 
     return Container(
@@ -27,7 +25,7 @@ class AddFolderModal extends StatelessWidget {
           ),
           TextField(
             autofocus: true,
-            controller: _foldernameController,
+            controller: foldernameController,
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(4, 16, 4, 0),
@@ -58,7 +56,7 @@ class AddFolderModal extends StatelessWidget {
                         backgroundColor:
                             MaterialStateProperty.all<Color>(Colors.blue)),
                     onPressed: () {
-                      fp.insert(PassFolder(_foldernameController.text));
+                      fp.insert(PassFolder(foldernameController.text));
                       Navigator.of(context).pop();
                     },
                     child: const Text('추가하기',

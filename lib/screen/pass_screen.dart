@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:passmanager/screen/pass_list.dart';
 
@@ -11,18 +10,18 @@ class PassScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final Map<String, Object?> folderInfo =
         ModalRoute.of(context)?.settings.arguments as Map<String, Object?>;
-    print("${folderInfo.toString()}");
+    print(folderInfo.toString());
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
         title: Text('${folderInfo['name']}'),
       ),
-      body: Center(child: PassList()),
+      body: const Center(child: PassList()),
       floatingActionButton: FloatingActionButton(
         onPressed: () => showDialog(
           context: context,
-          builder: (BuildContext context) => Dialog(
+          builder: (BuildContext context) => const Dialog(
               // child: AddFolderModal(),
               ),
         ),

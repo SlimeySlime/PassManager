@@ -1,7 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:passmanager/animation/folderscreen_navigate.dart';
-import 'package:passmanager/domain/passfolder.dart';
 import 'package:passmanager/screen/pass_screen.dart';
 
 class PassItem extends StatelessWidget {

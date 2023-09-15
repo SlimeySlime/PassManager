@@ -4,7 +4,7 @@ import 'package:passmanager/screen/pass_screen.dart';
 Route folderScreenAnimation() {
   return PageRouteBuilder(
     pageBuilder: (context, animation, secondaryAnimation) {
-      return PassScreen();
+      return const PassScreen();
     },
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       const begin = Offset(1, 0.0);

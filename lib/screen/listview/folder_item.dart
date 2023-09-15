@@ -1,8 +1,6 @@
-import 'dart:ffi';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:passmanager/animation/folderscreen_navigate.dart';
 import 'package:passmanager/domain/passfolder.dart';
 import 'package:passmanager/screen/pass_screen.dart';
 
@@ -24,8 +22,8 @@ class FolderItem extends StatelessWidget {
   final Function iconClick;
 
   int getRadixInt(int value) {
-    String hexa = '0x' + value.toRadixString(16);
-    print('${value} -> getRadixInt ${hexa}');
+    String hexa = '0x${value.toRadixString(16)}';
+    print('$value -> getRadixInt $hexa');
     return int.parse(hexa);
   }
 
@@ -43,7 +41,7 @@ class FolderItem extends StatelessWidget {
           },
           child: CircleAvatar(
             child: Padding(
-              padding: EdgeInsets.all(0.0),
+              padding: const EdgeInsets.all(0.0),
               child: FittedBox(
                 child: Icon(IconData(
                     getRadixInt(folderInfo.folderIconData ?? 98456),
